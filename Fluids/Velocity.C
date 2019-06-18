@@ -1,5 +1,6 @@
 #include "Velocity.H"
 #include "cellSet.H"
+//#include "vector.H"
 
 using namespace Foam;
 
@@ -37,25 +38,29 @@ void preciceAdapter::Fluids::Velocity::write(double * buffer)
             buffer[bufferIndex++] = U_->boundaryFieldRef()[patchID][i].y();
             buffer[bufferIndex++] = U_->boundaryFieldRef()[patchID][i].z();
         }
-
-        // For every cellSet associated to the patch
+        
+    }
+    
+    for (uint j = 0; j < cellSetNames_.size(); j++)
+    {
         // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
         // Maybe I can store pointers to the cellSets?
         cellSet overlapRegion(mesh_, cellSetNames_.at(j));
-		const labelList & cells = overlapRegion.toc();
-		for( int i=0; i < cells.size(); i++)
-		{
-			// Copy the three components of the velocity into the buffer
-			buffer[bufferIndex++] = U_->internalField()[cells[i]].x();
-			buffer[bufferIndex++] = U_->internalField()[cells[i]].y();
-			buffer[bufferIndex++] = U_->internalField()[cells[i]].z();
-		}
+		    const labelList & cells = overlapRegion.toc();
+		    for( int i=0; i < cells.size(); i++)
+		    {
+			      // Copy the three components of the velocity into the buffer
+			      buffer[bufferIndex++] = U_->internalField()[cells[i]].x();
+			      buffer[bufferIndex++] = U_->internalField()[cells[i]].y();
+			      buffer[bufferIndex++] = U_->internalField()[cells[i]].z();
+		    }
     }
 
 }
 
 double preciceAdapter::Fluids::Velocity::massCorrection(double * buffer, int patchID)
 {
+
 	// Calculate volumetric flow rate from the LUMIS data.
 	double flowRate = 0;
 
@@ -63,9 +68,14 @@ double preciceAdapter::Fluids::Velocity::massCorrection(double * buffer, int pat
 
 	// For every cell of the patch
 	//double area = 0;
+  // TODO: Use the patch normal vector so that massCorrection is valid for other than patches perpendicular to x direction. 
 	forAll(cPatch, i)
 	{
-		flowRate += buffer[3*i]*mesh_.magSf().boundaryField()[patchID][i];
+     //Foam::vector velocity(buffer[3*i], buffer[3*i+1], buffer[3*i+2]);
+     
+     //flowRate += (velocity & cPatch.faceAreas()[i]) * mesh_.magSf().boundaryField()[patchID][i];
+ 
+		 flowRate += buffer[3*i]*mesh_.magSf().boundaryField()[patchID][i];
 
 		//area += mesh_->magSf().boundaryField()[patchID][i];
 	}
@@ -83,6 +93,7 @@ double preciceAdapter::Fluids::Velocity::massCorrection(double * buffer, int pat
 void preciceAdapter::Fluids::Velocity::read(double * buffer)
 {
 
+    int bufferIndex = 0;
 
     // For every boundary patch of the interface
     for (uint j = 0; j < patchIDs_.size(); j++)
@@ -90,41 +101,51 @@ void preciceAdapter::Fluids::Velocity::read(double * buffer)
         int patchID = patchIDs_.at(j);
 
         // Mass correction
-        //TODO: Not sure this will work if you have more than one patch. Not sure if the way I'm calculating the correction will be accurate anymore.
-		float mcorrection = 1.0;
-		if(vDot_ > 0)
-			mcorrection = massCorrection(buffer, patchID);
+        // It assumes that all the patches have the same flow rate vDot_
+        // Also that all the patches go completelly across the domain. 
+		    float mcorrection = 1.0;
+		    if(vDot_ > 0)
+        {
+		        mcorrection = massCorrection(buffer, patchID);
+        }
 
-		std::cout << " Mass correction: " << mcorrection << std::endl;
-
-		int bufferIndex = 0;
+		    std::cout << " Mass correction: " << mcorrection << std::endl;
 
         // For every cell of the patch
+        // TODO: n has to be the patch normal instead of just 1 0 0. 
+        Foam::vector n(1.0, 0.0, 0.0);
         forAll(U_->boundaryFieldRef()[patchID], i)
         {
+            // Get normal vector 
+            //Foam::vector n = mesh_.boundaryMesh()[patchID].faceAreas()[i];
+        
             // Set the velocity as the buffer value
-            U_->boundaryFieldRef()[patchID][i].x() = mcorrection * buffer[bufferIndex++];
-            U_->boundaryFieldRef()[patchID][i].y() = buffer[bufferIndex++];
-            U_->boundaryFieldRef()[patchID][i].z() = buffer[bufferIndex++];
+            U_->boundaryFieldRef()[patchID][i].x() = mcorrection * n.x() * buffer[bufferIndex++];
+            U_->boundaryFieldRef()[patchID][i].y() = mcorrection * n.y() * buffer[bufferIndex++];
+            U_->boundaryFieldRef()[patchID][i].z() = mcorrection * n.z() * buffer[bufferIndex++];
 
             // Check that the mass flow has been corrected?
         }
+    }
 
-
-        // For every cellSet associated to the patch.
-        // TODO: I'm not applying the mass correction to this cells (anyway, their values will be overwritten by OF on the next time step)
-        // but not applying mass correction might affect the results.
-        // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
-		// Maybe I can store pointers to the cellSets?
-		//cellSet overlapRegion(mesh_, cellSetNames_.at(j));
-		//const labelList & cells = overlapRegion.toc();
-		//for( int i=0; i < cells.size(); i++)
-		//{
-			// Set the velocity to the buffer value
-			//U_->ref()[cells[i]].x() = buffer[bufferIndex++];
-			//U_->ref()[cells[i]].y() = buffer[bufferIndex++];
-			//U_->ref()[cells[i]].z() = buffer[bufferIndex++];
-		//}
-
+    //TODO: Cacluate and apply mass correction to cellSets
+    for (uint j = 0; j < cellSetNames_.size(); j++)
+    {
+        // TODO: Do the cellSets have to be created before using all the time ? Maybe I can store pointers to the cellSets?
+		    cellSet overlapRegion(mesh_, cellSetNames_.at(j));
+		    const labelList & cells = overlapRegion.toc();
+            
+        if(vDot_ > 0)
+        {
+		        std::cout << " Mass correction not implemented for cellSets." << std::endl;
+        }
+        
+    		for( int i=0; i < cells.size(); i++)
+    		{
+    			// Set the velocity to the buffer value
+    			U_->ref()[cells[i]].x() = buffer[bufferIndex++];
+    			U_->ref()[cells[i]].y() = buffer[bufferIndex++];
+    			U_->ref()[cells[i]].z() = buffer[bufferIndex++];
+    		}
     }
 }
