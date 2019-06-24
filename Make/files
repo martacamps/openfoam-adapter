@@ -13,6 +13,7 @@ CHT/SinkTemperature.C
 CHT/CHT.C
 
 Fluids/Pressure.C
+Fluids/PressureGradient.C
 Fluids/Velocity.C
 
 Fluids/Fluids.C

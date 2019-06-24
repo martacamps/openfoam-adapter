@@ -159,7 +159,7 @@ void preciceAdapter::Interface::addCouplingDataWriter
     if (couplingDataWriter->hasVectorData())
     {
     	couplingDataWriter->setBufferSize(3*numDataLocations_);
-    	dataBuffer_ = (double*)realloc(dataBuffer_, (3*numDataLocations_)*sizeof(double));
+    	dataBuffer_ = static_cast<double*>(realloc(dataBuffer_, (3*numDataLocations_)*sizeof(double)));
     }
 }
 
@@ -184,7 +184,7 @@ void preciceAdapter::Interface::addCouplingDataReader
     if (couplingDataReader->hasVectorData())
     {
     	couplingDataReader->setBufferSize(3*numDataLocations_);
-    	dataBuffer_ = (double*)realloc(dataBuffer_, (3*numDataLocations_)*sizeof(double));
+    	dataBuffer_ = static_cast<double*>(realloc(dataBuffer_, (3*numDataLocations_)*sizeof(double)));
     }
 }
 

@@ -5,6 +5,7 @@
 
 #include "Fluids/Pressure.H"
 #include "Fluids/Velocity.H"
+#include "Fluids/PressureGradient.H"
 
 #include "fvCFD.H"
 

@@ -57,16 +57,11 @@ bool preciceAdapter::Adapter::configFileCheck(const std::string adapterConfigFil
                 adapterInfo("The 'mesh' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
                 configErrors = true;
             }
-            if (!adapterConfig["interfaces"][i]["patches"])
+            if ((!adapterConfig["interfaces"][i]["patches"]) && (!adapterConfig["interfaces"][i]["cellSets"]))
             {
-                adapterInfo("The 'patches' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
+                adapterInfo("A 'patches' and / or a 'cellSet' node is required for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
                 configErrors = true;
             }
-            if (!adapterConfig["interfaces"][i]["cellSets"])
-			{
-				adapterInfo("The 'cellSets' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
-				configErrors = true;
-			}
             if (!adapterConfig["interfaces"][i]["write-data"])
             {
                 adapterInfo("The 'write-data' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
@@ -76,14 +71,6 @@ bool preciceAdapter::Adapter::configFileCheck(const std::string adapterConfigFil
             {
                 adapterInfo("The 'read-data' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
                 configErrors = true;
-            }
-
-            // Check that there are as many patches as cellSets for the current interface.
-            if (adapterConfig["interfaces"][i]["cellSets"].size() != adapterConfig["interfaces"][i]["patches"].size())
-            {
-            	adapterInfo("The interface #" + std::to_string(i+1) + " has " + std::to_string(adapterConfig["interfaces"][i]["cellSets"].size())
-            			+ " cellSets and " + std::to_string(adapterConfig["interfaces"][i]["patches"].size()) + " patches. The number of cellSets and patches should match");
-            	configErrors = true;
             }
         }
     }
@@ -138,11 +125,11 @@ bool preciceAdapter::Adapter::configFileRead()
         }
 
         DEBUG(adapterInfo("    cellSets   : "));
-		for (uint j = 0; j < adapterConfigInterfaces[i]["cellSets"].size(); j++)
-		{
-			interfaceConfig.cellSetNames.push_back(adapterConfigInterfaces[i]["cellSets"][j].as<std::string>());
-			DEBUG(adapterInfo("      " + adapterConfigInterfaces[i]["cellSets"][j].as<std::string>()));
-		}
+		    for (uint j = 0; j < adapterConfigInterfaces[i]["cellSets"].size(); j++)
+		    {
+			    interfaceConfig.cellSetNames.push_back(adapterConfigInterfaces[i]["cellSets"][j].as<std::string>());
+			    DEBUG(adapterInfo("      " + adapterConfigInterfaces[i]["cellSets"][j].as<std::string>()));
+		    }
 
         if (adapterConfigInterfaces[i]["write-data"])
         {
@@ -219,11 +206,11 @@ bool preciceAdapter::Adapter::configFileRead()
     DEBUG(adapterInfo("    CHT module enabled : " + std::to_string(CHTenabled_)));
 
     // Set the Fluidsenabled_ switch
-	if (adapterConfig_["Fluidsenabled"])
-	{
-		FluidsEnabled_ = adapterConfig_["Fluidsenabled"].as<bool>();
-	}
-	DEBUG(adapterInfo("    Fluids module enabled : " + std::to_string(FluidsEnabled_)));
+	  if (adapterConfig_["Fluidsenabled"])
+	  {
+		  FluidsEnabled_ = adapterConfig_["Fluidsenabled"].as<bool>();
+	  }
+	  DEBUG(adapterInfo("    Fluids module enabled : " + std::to_string(FluidsEnabled_)));
 
     // Check which modules are active, create them and read
     // Their specific options and configure them.

@@ -83,32 +83,11 @@ bool preciceAdapter::Fluids::VelocityAndPressure::readConfig(const YAML::Node ad
     DEBUG(adapterInfo("    density name for incompressible solvers : " + nameRho_));
 
     // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
-	if (adapterConfig["InletVdot"])
-	{
-		vDot_ = adapterConfig["InletVdot"].as<double>();
-	}
-	DEBUG(adapterInfo("    inlet volumetric flow rate : " + std::to_string(vDot_)));
-
-    // // Read the name of the heat capacity parameter for incompressible solvers (if different)
-    // if (adapterConfig["nameCp"])
-    // {
-    //     nameCp_ = adapterConfig["nameCp"].as<std::string>();
-    // }
-    // DEBUG(adapterInfo("    heat capacity name for incompressible solvers : " + nameCp_));
-
-    // // Read the name of the Prandtl number parameter for incompressible solvers (if different)
-    // if (adapterConfig["namePr"])
-    // {
-    //     namePr_ = adapterConfig["namePr"].as<std::string>();
-    // }
-    // DEBUG(adapterInfo("    Prandtl number name for incompressible solvers : " + namePr_));
-
-    // // Read the name of the turbulent thermal diffusivity field for incompressible solvers (if different)
-    // if (adapterConfig["nameAlphat"])
-    // {
-    //     nameAlphat_ = adapterConfig["nameAlphat"].as<std::string>();
-    // }
-    // DEBUG(adapterInfo("    Turbulent thermal diffusivity field name for incompressible solvers : " + nameAlphat_));
+	  if (adapterConfig["InletVdot"])
+	  {
+	  	vDot_ = adapterConfig["InletVdot"].as<double>();
+	  }
+	  DEBUG(adapterInfo("    inlet volumetric flow rate : " + std::to_string(vDot_)));
 
     return true;
 }
@@ -136,7 +115,7 @@ std::string preciceAdapter::Fluids::VelocityAndPressure::determineSolverType()
 //    {
 //        DEBUG(adapterInfo("Did not find the transportProperties dictionary."));
 //    }
-//
+
 //    if (mesh_.foundObject<IOdictionary>(turbulenceModel::propertiesName))
 //    {
 //        turbulencePropertiesExists = true;
@@ -147,8 +126,8 @@ std::string preciceAdapter::Fluids::VelocityAndPressure::determineSolverType()
 //    {
 //        DEBUG(adapterInfo("Did not find the " + turbulenceModel::propertiesName
 //            + " dictionary."));
-//    }
-//
+//   }
+
 //    if (mesh_.foundObject<IOdictionary>("thermophysicalProperties"))
 //    {
 //        thermophysicalPropertiesExists = true;
@@ -227,6 +206,15 @@ void preciceAdapter::Fluids::VelocityAndPressure::addWriters(std::string dataNam
         );
         DEBUG(adapterInfo("Added writer: Velocity."));
     }
+    else if (dataName.find("gradP") == 0)
+    {
+        interface->addCouplingDataWriter
+        (
+            dataName,
+            new PressureGradient(mesh_, nameP_)
+        );
+        DEBUG(adapterInfo("Added writer: pressure gradient."));
+    }
     else
     {
         adapterInfo("Unknown data type - cannot add " + dataName +".", "error");
@@ -261,6 +249,15 @@ void preciceAdapter::Fluids::VelocityAndPressure::addReaders(std::string dataNam
             new Velocity(mesh_, nameU_,vDot_)
         );
         DEBUG(adapterInfo("Added reader: Velocity."));
+    }
+    else if (dataName.find("grad") == 0)
+    {
+        interface->addCouplingDataWriter
+        (
+            dataName,
+            new PressureGradient(mesh_, nameP_)
+        );
+        DEBUG(adapterInfo("Added reader: pressure gradient."));
     }
     else
     {
