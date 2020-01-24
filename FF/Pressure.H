@@ -18,6 +18,9 @@ private:
 
     //- Pressure field
     Foam::volScalarField * p_;
+    
+    //- Associated mesh
+    const Foam::fvMesh& mesh_;
 
 public:
 

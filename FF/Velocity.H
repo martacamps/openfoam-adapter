@@ -18,6 +18,15 @@ private:
 
     //- Velocity field
     Foam::volVectorField * U_;
+    
+    //- Associated mesh
+    const Foam::fvMesh& mesh_;
+
+    //- Inlet volumetric flow rate (needed for mass correction)
+    double vDot_;
+    
+    //- Calculate mass correction for the values a the interface.
+    double massCorrection(double * buffer, int patchID);
 
 public:
 
@@ -25,7 +34,8 @@ public:
     Velocity
     (
         const Foam::fvMesh& mesh,
-        const std::string nameU
+        const std::string nameU,
+        const double vDot
     );
 
     //- Write the velocity values into the buffer

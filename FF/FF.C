@@ -60,6 +60,13 @@ bool preciceAdapter::FF::FluidFluid::readConfig(const YAML::Node adapterConfig)
         nameP_ = adapterConfig["nameP"].as<std::string>();
     }
     DEBUG(adapterInfo("    pressure field name : " + nameP_));
+    
+    // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
+	  if (adapterConfig["InletVdot"])
+	  {
+		  vDot_ = adapterConfig["InletVdot"].as<double>();
+	  }
+	  DEBUG(adapterInfo("    inlet volumetric flow rate : " + std::to_string(vDot_)));
 
     return true;
 }
@@ -73,6 +80,8 @@ std::string preciceAdapter::FF::FluidFluid::determineSolverType()
     
     // TODO: Implement properly
     solverType = "incompressible";
+    
+    // TODO: I will have to implement this properly when coupling RANS solvers. 
     
     return solverType;
 }
@@ -93,7 +102,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         interface->addCouplingDataWriter
         (
             dataName,
-            new Velocity(mesh_, nameU_)
+            new Velocity(mesh_, nameU_, vDot_)
         );
         DEBUG(adapterInfo("Added writer: Velocity."));
     }
@@ -143,7 +152,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         interface->addCouplingDataReader
         (
             dataName,
-            new Velocity(mesh_, nameU_)
+            new Velocity(mesh_, nameU_, vDot_)
         );
         DEBUG(adapterInfo("Added reader: Velocity."));
     }

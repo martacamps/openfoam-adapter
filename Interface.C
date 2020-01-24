@@ -1,5 +1,6 @@
 #include "Interface.H"
 #include "Utilities.H"
+#include "cellSet.H"
 
 using namespace Foam;
 
@@ -9,13 +10,15 @@ preciceAdapter::Interface::Interface
     const fvMesh& mesh,
     std::string meshName,
     std::string locationsType,
-    std::vector<std::string> patchNames
+    std::vector<std::string> patchNames,
+    std::vector<std::string> cellSetNames
 )
 :
 precice_(precice),
 meshName_(meshName),
 locationsType_(locationsType),
-patchNames_(patchNames)
+patchNames_(patchNames),
+cellSetNames_(cellSetNames)
 {
     // Get the meshID from preCICE
     meshID_ = precice_.getMeshID(meshName_);
@@ -57,8 +60,33 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         {
             numDataLocations_ +=
                 mesh.boundaryMesh()[patchIDs_.at(j)].faceCentres().size();
-        }
-        DEBUG(adapterInfo("Number of face centres: " + std::to_string(numDataLocations_)));
+        }DEBUG(adapterInfo("Number of face centres: " + std::to_string(numDataLocations_)));
+        
+        // Count the data location for all the cellSets
+        // For every cellSet that participates in the coupling
+	      for (uint j = 0; j < cellSetNames_.size(); j++)
+	      {
+             // Get the cell labels of the overlapping region
+             std::vector<labelList> overlapCells;
+             
+		        // Create a cell set
+		        cellSet overlapRegion(mesh, cellSetNames_[j]);
+
+		        // Throw an error if the patch was not found
+            //		if (overlapRegion == NULL)
+            //		{
+            //			FatalErrorInFunction
+            //				 << "ERROR: CellSet'"
+            //				 << cellSetNames.at(j)
+            //				 << "' does not exist."
+            //				 << exit(FatalError);
+            //		}
+
+        		// Add the cells ID's to the vector and count how many overlap cells does the interface has
+        		overlapCells.push_back(overlapRegion.toc());
+        		numDataLocations_ += overlapCells[j].size();
+           
+        }DEBUG(adapterInfo("Number of sellSet cell centres: " + std::to_string(numDataLocations_)));
 
         // Array of the mesh vertices.
         // One mesh is used for all the patches and each vertex has 3D coordinates.
@@ -87,6 +115,22 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
                 vertices[verticesIndex++] = faceCenters[i].z();
             }
         }
+        
+        // Get the locations of the mesh centres
+        // for all the cellSets
+        for (uint j = 0; j < cellSetNames_.size(); j++)
+	      {
+            // Get the cell centres of the current cellSet.
+            const labelList & cells = overlapCells.at(j);
+
+            // Get the coordinates of the cells of the current cellSet.
+            for (int i=0; i < cells.size(); i++)
+            {
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].x();
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].y();
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].z();
+            }
+        } 
 
         // Pass the mesh vertices information to preCICE
         precice_.setMeshVertices(meshID_, numDataLocations_, vertices, vertexIDs_);
@@ -100,6 +144,32 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
                 mesh.boundaryMesh()[patchIDs_.at(j)].localPoints().size();
         }
         DEBUG(adapterInfo("Number of face nodes: " + std::to_string(numDataLocations_)));
+        
+        // Count the data location for all the cellSets
+        // For every cellSet that participates in the coupling
+	      for (uint j = 0; j < cellSetNames_.size(); j++)
+	      {
+             // Get the cell labels of the overlapping region
+             std::vector<labelList> overlapCells;
+             
+		        // Create a cell set
+		        cellSet overlapRegion(mesh, cellSetNames_[j]);
+
+		        // Throw an error if the patch was not found
+            //		if (overlapRegion == NULL)
+            //		{
+            //			FatalErrorInFunction
+            //				 << "ERROR: CellSet'"
+            //				 << cellSetNames.at(j)
+            //				 << "' does not exist."
+            //				 << exit(FatalError);
+            //		}
+
+        		// Add the cells ID's to the vector and count how many overlap cells does the interface has
+        		overlapCells.push_back(overlapRegion.toc());
+        		numDataLocations_ += overlapCells[j].size();
+           
+        }DEBUG(adapterInfo("Number of sellSet cell centres: " + std::to_string(numDataLocations_)));
 
         // Array of the mesh vertices.
         // One mesh is used for all the patches and each vertex has 3D coordinates.
@@ -133,6 +203,22 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
                 vertices[verticesIndex++] = faceNodes[i].z();
             }
         }
+        
+        // Get the locations of the mesh centres
+        // for all the cellSets
+        for (uint j = 0; j < cellSetNames_.size(); j++)
+	      {
+            // Get the cell centres of the current cellSet.
+            const labelList & cells = overlapCells.at(j);
+
+            // Get the coordinates of the cells of the current cellSet.
+            for (int i=0; i < cells.size(); i++)
+            {
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].x();
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].y();
+            	vertices[verticesIndex++] = mesh.C().internalField()[cells[i]].z();
+            }
+        } 
 
         // Pass the mesh vertices information to preCICE
         precice_.setMeshVertices(meshID_, numDataLocations_, vertices, vertexIDs_);
@@ -159,6 +245,9 @@ void preciceAdapter::Interface::addCouplingDataWriter
 
     // Set the patchIDs of the patches that form the interface
     couplingDataWriter->setPatchIDs(patchIDs_);
+    
+    // Set the names of the cellSets that form the interface
+    couplingDataWriter->setCellSetNames(cellSetNames_);
 
     // Add the CouplingDataUser to the list of writers
     couplingDataWriters_.push_back(couplingDataWriter);
@@ -176,6 +265,7 @@ void preciceAdapter::Interface::addCouplingDataReader
 
     // Add the CouplingDataUser to the list of readers
     couplingDataReader->setPatchIDs(patchIDs_);
+    couplingDataReader->setCellSetNames(cellSetNames_);
     couplingDataReaders_.push_back(couplingDataReader);
 }
 

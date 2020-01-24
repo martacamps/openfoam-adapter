@@ -5,6 +5,8 @@
 
 #include "fvCFD.H"
 
+// TODO: Introduce the use of cellSets. 
+
 namespace preciceAdapter
 {
 namespace FF
@@ -18,7 +20,7 @@ private:
 
     //- Pressure field
     Foam::volScalarField * p_;
-
+    
 public:
 
     //- Constructor

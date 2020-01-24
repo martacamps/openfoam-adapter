@@ -5,6 +5,8 @@
 
 #include "fvCFD.H"
 
+//TODO: Implement cellSets. 
+
 namespace preciceAdapter
 {
 namespace FF

@@ -42,6 +42,10 @@ protected:
 
     //- Read the FF-related options from the adapter's configuration file
     bool readConfig(const YAML::Node adapterConfig);
+    
+    //- Inlet volumetric flow rate. The value by default deactivates the mass correction
+    // TODO: Should I change this so that it could work with negative flow rates?
+    double vDot_ = -1;
 
 public:
 

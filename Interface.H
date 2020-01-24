@@ -29,6 +29,9 @@ protected:
 
     //- Names of the OpenFOAM patches that form the interface
     std::vector<std::string> patchNames_;
+    
+    //- Names of the OpenFOAM cellSets that form the interface
+    std::vector<std::string> cellSetNames_;
 
     //- OpenFOAM patches that form the interface
     std::vector<int> patchIDs_;
@@ -61,7 +64,8 @@ public:
         const Foam::fvMesh& mesh,
         std::string meshName,
         std::string locationsType,
-        std::vector<std::string> patchNames
+        std::vector<std::string> patchNames,
+        std::vector<std::string> cellSetNames
     );
 
     //- Add a CouplingDataUser to read data from the interface
