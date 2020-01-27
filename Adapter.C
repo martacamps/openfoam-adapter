@@ -57,19 +57,13 @@ bool preciceAdapter::Adapter::configFileCheck(const std::string adapterConfigFil
                 adapterInfo("The 'mesh' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
                 configErrors = true;
             }
-            if (!adapterConfig["interfaces"][i]["patches"])
+            if ((!adapterConfig["interfaces"][i]["patches"]) && (!adapterConfig["interfaces"][i]["cellSets"]))
             {
-                adapterInfo("The 'patches' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
-                configErrors = true;
-            }
-            if (!adapterConfig["interfaces"][i]["cellSets"])
-            {
-                adapterInfo("The 'cellSets' node is missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
+                adapterInfo("Both 'patches' and 'cellSets' nodes are missing for the interface #" + std::to_string(i+1) + " in " + adapterConfigFileName + ".", "warning");
                 configErrors = true;
             }
         }
     }
-
     return !configErrors;
 }
 

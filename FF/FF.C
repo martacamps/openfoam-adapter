@@ -97,7 +97,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Velocity Gradient."));
     }
-    else if (dataName.find("Velocity") == 0)
+    else if ((dataName.find("Velocity") == 0) || (dataName.find("vel") == 0))
     {
         interface->addCouplingDataWriter
         (
@@ -147,7 +147,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: VelocityGradient."));
     }
-    else if (dataName.find("Velocity") == 0)
+    else if ((dataName.find("Velocity") == 0) || (dataName.find("vel") == 0))
     {
         interface->addCouplingDataReader
         (
