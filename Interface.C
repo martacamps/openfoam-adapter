@@ -55,6 +55,7 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
     // all the branches.
     if (locationsType_ == "faceCenters" || locationsType_ == "faceCentres")
     {
+         
         // Count the data locations for all the patches
         for (uint j = 0; j < patchIDs_.size(); j++)
         {
@@ -62,13 +63,13 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
                 mesh.boundaryMesh()[patchIDs_.at(j)].faceCentres().size();
         }DEBUG(adapterInfo("Number of face centres: " + std::to_string(numDataLocations_)));
         
+        // Get the cell labels of the overlapping region
+        std::vector<labelList> overlapCells;
+        
         // Count the data location for all the cellSets
         // For every cellSet that participates in the coupling
 	      for (uint j = 0; j < cellSetNames_.size(); j++)
 	      {
-             // Get the cell labels of the overlapping region
-             std::vector<labelList> overlapCells;
-             
 		        // Create a cell set
 		        cellSet overlapRegion(mesh, cellSetNames_[j]);
 
@@ -145,13 +146,14 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         }
         DEBUG(adapterInfo("Number of face nodes: " + std::to_string(numDataLocations_)));
         
+        // Get the cell labels of the overlapping region
+        std::vector<labelList> overlapCells;
+        
         // Count the data location for all the cellSets
         // For every cellSet that participates in the coupling
 	      for (uint j = 0; j < cellSetNames_.size(); j++)
 	      {
-             // Get the cell labels of the overlapping region
-             std::vector<labelList> overlapCells;
-             
+
 		        // Create a cell set
 		        cellSet overlapRegion(mesh, cellSetNames_[j]);
 

@@ -53,7 +53,7 @@ void preciceAdapter::FF::Velocity::write(double * buffer)
     // For every cell set of the interface
     // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
 		// Maybe I can store pointers to the cellSets?
-    for (uint j = 0; j < cellSetNames_.at(j); j++)
+    for (uint j = 0; j < cellSetNames_.size(); j++)
     {
         cellSet overlapRegion(mesh_, cellSetNames_.at(j));
 		    const labelList & cells = overlapRegion.toc();
@@ -67,7 +67,7 @@ void preciceAdapter::FF::Velocity::write(double * buffer)
     }
 }
 
-double preciceAdapter::Fluids::Velocity::massCorrection(double * buffer, int patchID)
+double preciceAdapter::FF::Velocity::massCorrection(double * buffer, int patchID)
 {
 	// Calculate volumetric flow rate from the received data.
 	double flowRate = 0;
@@ -136,7 +136,7 @@ void preciceAdapter::FF::Velocity::read(double * buffer)
     // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
 		// Maybe I can store pointers to the cellSets?
     // TODO: Implement mass correction for cellSets?
-    for (uint j = 0; j < cellSetNames_.at(j); j++)
+    for (uint j = 0; j < cellSetNames_.size(); j++)
     {
         cellSet overlapRegion(mesh_, cellSetNames_.at(j));
 		    const labelList & cells = overlapRegion.toc();

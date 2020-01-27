@@ -41,7 +41,7 @@ void preciceAdapter::FF::Pressure::write(double * buffer)
     // For every cell set of the interface
     // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
 		// Maybe I can store pointers to the cellSets?
-    for (uint j = 0; j < cellSetNames_.at(j); j++)
+    for (uint j = 0; j < cellSetNames_.size(); j++)
     {
         cellSet overlapRegion(mesh_, cellSetNames_.at(j));
 		    const labelList & cells = overlapRegion.toc();
@@ -50,7 +50,7 @@ void preciceAdapter::FF::Pressure::write(double * buffer)
         	// Copy the pressure into the buffer
         	buffer[bufferIndex++]
         	=
-        	P_->internalField()[cells[i]];
+        	p_->internalField()[cells[i]];
         }
     }
 }
@@ -77,14 +77,14 @@ void preciceAdapter::FF::Pressure::read(double * buffer)
      // For every cell set of the interface
     // TODO: Do I have to create the cellSet each time? Don't they have indices or something like patches do?
 		// Maybe I can store pointers to the cellSets?
-    for (uint j = 0; j < cellSetNames_.at(j); j++)
+    for (uint j = 0; j < cellSetNames_.size(); j++)
     {
         cellSet overlapRegion(mesh_, cellSetNames_.at(j));
 		    const labelList & cells = overlapRegion.toc();
         for( uint i=0; i < cells.size(); i++)
         {
         	// Set the pressure as the buffer value
-          p_->ref()[cells[i]].x()
+          p_->ref()[cells[i]]
           = 
           buffer[bufferIndex++];
         }
