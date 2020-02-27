@@ -61,6 +61,13 @@ bool preciceAdapter::FF::FluidFluid::readConfig(const YAML::Node adapterConfig)
     }
     DEBUG(adapterInfo("    pressure field name : " + nameP_));
     
+    // Read the name of the turbulent dissipation field (if different)
+    if (adapterConfig["nameE"])
+    {
+        nameE_ = adapterConfig["nameE"].as<std::string>();
+    }
+    DEBUG(adapterInfo("    epsilon field name : " + nameP_));
+    
     // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
 	  if (adapterConfig["InletVdot"])
 	  {
@@ -124,6 +131,15 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Pressure."));
     }
+    else if (dataName.find("psil") == 0)
+    {
+        interface->addCouplingDataWriter
+        (
+            dataName,
+            new Epsilon(mesh_, nameE_)
+        );
+        DEBUG(adapterInfo("Added writer: Epsilon."));
+    }
     else
     {
         adapterInfo("Unknown data type - cannot add " + dataName +".", "error");
@@ -173,6 +189,15 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
             new Pressure(mesh_, nameP_)
         );
         DEBUG(adapterInfo("Added reader: Pressure."));
+    }
+    else if (dataName.find("psil") == 0)
+    {
+        interface->addCouplingDataReader
+        (
+            dataName,
+            new Epsilon(mesh_, nameE_)
+        );
+        DEBUG(adapterInfo("Added writer: Epsilon."));
     }
     else
     {

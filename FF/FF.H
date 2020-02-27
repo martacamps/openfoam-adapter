@@ -5,6 +5,7 @@
 
 #include "FF/Velocity.H"
 #include "FF/Pressure.H"
+#include "FF/Epsilon.H"
 #include "FF/PressureGradient.H"
 #include "FF/VelocityGradient.H"
 
@@ -36,6 +37,9 @@ protected:
     
     //- Name of the pressure field
     std::string nameP_ = "p";
+    
+    //- Name of the turbulent dissipation field
+    std::string nameE_ = "epsilon";
 
     //- Determine the solver type
     std::string determineSolverType();

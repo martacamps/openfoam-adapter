@@ -21,6 +21,7 @@ FF/FF.C
 FF/Velocity.C
 FF/VelocityGradient.C
 FF/Pressure.C
+FF/Epsilon.C
 FF/PressureGradient.C
 
 Adapter.C
