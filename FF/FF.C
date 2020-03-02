@@ -131,7 +131,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Pressure."));
     }
-    else if (dataName.find("psil") == 0)
+    else if (dataName.find("epsilon") == 0)
     {
         interface->addCouplingDataWriter
         (
