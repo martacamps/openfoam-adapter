@@ -43,7 +43,7 @@ protected:
     std::string nameE_ = "epsilon";
     
     //- Name of the Reynolds stress field (the simulations needs to use the turbulenceFields function object)
-    std::string nameR_ = "turbulenceModel:R";
+    std::string nameR_ = "turbulenceProperties:R";
 
     //- Determine the solver type
     std::string determineSolverType();
