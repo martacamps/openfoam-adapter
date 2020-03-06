@@ -66,7 +66,7 @@ bool preciceAdapter::FF::FluidFluid::readConfig(const YAML::Node adapterConfig)
     {
         nameE_ = adapterConfig["nameE"].as<std::string>();
     }
-    DEBUG(adapterInfo("    epsilon field name : " + nameP_));
+    DEBUG(adapterInfo("    epsilon field name : " + nameE_));
     
     // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
 	  if (adapterConfig["InletVdot"])
