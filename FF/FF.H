@@ -4,6 +4,7 @@
 #include "Interface.H"
 
 #include "FF/Velocity.H"
+#include "FF/ReDiag.H"
 #include "FF/Pressure.H"
 #include "FF/Epsilon.H"
 #include "FF/PressureGradient.H"
@@ -40,6 +41,9 @@ protected:
     
     //- Name of the turbulent dissipation field
     std::string nameE_ = "epsilon";
+    
+    //- Name of the Reynolds stress field (the simulations needs to use the turbulenceFields function object)
+    std::string nameR_ = "turbulenceModel:R";
 
     //- Determine the solver type
     std::string determineSolverType();
