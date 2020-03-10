@@ -63,9 +63,9 @@ void preciceAdapter::FF::ReUpperDiag::write(double * buffer)
         for( uint i=0; i < cells.size(); i++)
         {
         	// Copy the three components of the velocity into the buffer
-			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].xx();
-			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].yy();
-			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].zz();
+			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].xy();
+			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].xz();
+			    buffer[bufferIndex++] = ReStress_->internalField()[cells[i]].yz();
         }
     }
 }
@@ -93,17 +93,17 @@ void preciceAdapter::FF::ReUpperDiag::read(double * buffer)
         {
             // Set the velocity as the buffer value
             // x-dimension
-            ReStress_->boundaryFieldRef()[patchID][i].xx()
+            ReStress_->boundaryFieldRef()[patchID][i].xy()
             =
             buffer[bufferIndex++];
 
             // y-dimension
-            ReStress_->boundaryFieldRef()[patchID][i].yy()
+            ReStress_->boundaryFieldRef()[patchID][i].xz()
             =
             buffer[bufferIndex++];
 
             // z-dimension
-            ReStress_->boundaryFieldRef()[patchID][i].zz()
+            ReStress_->boundaryFieldRef()[patchID][i].yz()
             =
             buffer[bufferIndex++];
         }
@@ -120,9 +120,9 @@ void preciceAdapter::FF::ReUpperDiag::read(double * buffer)
         for( uint i=0; i < cells.size(); i++)
         {
         	// Set the velocity to the buffer value
-			    ReStress_->ref()[cells[i]].xx() = buffer[bufferIndex++];
-			    ReStress_->ref()[cells[i]].yy() = buffer[bufferIndex++];
-			    ReStress_->ref()[cells[i]].zz() = buffer[bufferIndex++];
+			    ReStress_->ref()[cells[i]].xy() = buffer[bufferIndex++];
+			    ReStress_->ref()[cells[i]].xz() = buffer[bufferIndex++];
+			    ReStress_->ref()[cells[i]].yz() = buffer[bufferIndex++];
         }
     }
     
