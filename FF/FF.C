@@ -102,7 +102,7 @@ std::string preciceAdapter::FF::FluidFluid::determineSolverType()
 
 void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface * interface)
 {
-    if (dataName.find("VelocityGradient") == 0)
+    if (dataName.find("VelocityGradient") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -111,7 +111,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Velocity Gradient."));
     }
-    else if ((dataName.find("Velocity") == 0) || (dataName.find("vel") == 0))
+    else if ((dataName.find("Velocity") != std::string::npos) || (dataName.find("vel") != std::string::npos) || (dataName.find("u") != std::string::npos))
     {
         interface->addCouplingDataWriter
         (
@@ -120,7 +120,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Velocity."));
     }
-    else if (dataName.find("ReDiag") == 0)
+    else if (dataName.find("ReDiag") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -129,7 +129,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Re stress diagonal."));
     }
-    else if (dataName.find("ReUpperDiag") == 0)
+    else if (dataName.find("ReUpperDiag") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -138,7 +138,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Re stress upper diagonal."));
     }
-    else if (dataName.find("PressureGradient") == 0)
+    else if (dataName.find("PressureGradient") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -147,7 +147,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Pressure Gradient."));
     }
-    else if (dataName.find("Pressure") == 0)
+    else if (dataName.find("Pressure") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -156,7 +156,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added writer: Pressure."));
     }
-    else if (dataName.find("epsilon") == 0)
+    else if (dataName.find("eps") != std::string::npos)
     {
         interface->addCouplingDataWriter
         (
@@ -179,7 +179,7 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
 
 void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface * interface)
 {
-    if (dataName.find("VelocityGradient") == 0)
+    if (dataName.find("VelocityGradient") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
@@ -188,7 +188,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: VelocityGradient."));
     }
-    else if ((dataName.find("Velocity") == 0) || (dataName.find("vel") == 0))
+    else if ((dataName.find("Velocity") != std::string::npos) || (dataName.find("vel") != std::string::npos) || (dataName.find("u") != std::string::npos) )
     {
         interface->addCouplingDataReader
         (
@@ -197,7 +197,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: Velocity."));
     }
-    else if (dataName.find("ReDiag") == 0)
+    else if (dataName.find("ReDiag") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
@@ -206,7 +206,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: Re stress diagonal."));
     }
-    else if (dataName.find("ReUpperDiag") == 0)
+    else if (dataName.find("ReUpperDiag") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
@@ -215,7 +215,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: Re stress upper diagonal."));
     }
-    else if (dataName.find("PressureGradient") == 0)
+    else if (dataName.find("PressureGradient") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
@@ -224,7 +224,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: Pressure Gradient."));
     }
-    else if (dataName.find("Pressure") == 0)
+    else if (dataName.find("Pressure") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
@@ -233,7 +233,7 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
         );
         DEBUG(adapterInfo("Added reader: Pressure."));
     }
-    else if (dataName.find("psil") == 0)
+    else if (dataName.find("eps") != std::string::npos)
     {
         interface->addCouplingDataReader
         (
