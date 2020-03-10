@@ -68,6 +68,13 @@ bool preciceAdapter::FF::FluidFluid::readConfig(const YAML::Node adapterConfig)
     }
     DEBUG(adapterInfo("    epsilon field name : " + nameE_));
     
+    // Read the name of the Reynolds stresses (if different)
+    if (adapterConfig["nameR"])
+    {
+        nameR_ = adapterConfig["nameR"].as<std::string>();
+    }
+    DEBUG(adapterInfo("    Reynolds stresses field name : " + nameR_));
+    
     // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
 	  if (adapterConfig["InletVdot"])
 	  {
@@ -121,6 +128,15 @@ void preciceAdapter::FF::FluidFluid::addWriters(std::string dataName, Interface 
             new ReDiag(mesh_, nameR_)
         );
         DEBUG(adapterInfo("Added writer: Re stress diagonal."));
+    }
+    else if (dataName.find("ReUpperDiag") == 0)
+    {
+        interface->addCouplingDataWriter
+        (
+            dataName,
+            new ReUpperDiag(mesh_, nameR_)
+        );
+        DEBUG(adapterInfo("Added writer: Re stress upper diagonal."));
     }
     else if (dataName.find("PressureGradient") == 0)
     {
@@ -189,6 +205,15 @@ void preciceAdapter::FF::FluidFluid::addReaders(std::string dataName, Interface 
             new ReDiag(mesh_, nameR_)
         );
         DEBUG(adapterInfo("Added reader: Re stress diagonal."));
+    }
+    else if (dataName.find("ReUpperDiag") == 0)
+    {
+        interface->addCouplingDataReader
+        (
+            dataName,
+            new ReDiag(mesh_, nameR_)
+        );
+        DEBUG(adapterInfo("Added reader: Re stress upper diagonal."));
     }
     else if (dataName.find("PressureGradient") == 0)
     {

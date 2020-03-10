@@ -10,12 +10,7 @@ preciceAdapter::FF::Epsilon::Epsilon
     const std::string nameE
 )
 :
-epsilon_(
-    const_cast<volScalarField*>
-    (
-        &mesh.lookupObject<volScalarField>(nameE)
-    )
-),mesh_(mesh)
+epsilon_(NULL),mesh_(mesh),nameE_(nameE)
 {
     dataType_ = scalar; 
 }
@@ -23,6 +18,10 @@ epsilon_(
 void preciceAdapter::FF::Epsilon::write(double * buffer)
 {
     int bufferIndex = 0;
+    
+    // Get a pointer to the epsilon field if it didn't exist
+    if (epsilon_ == NULL)
+      epsilon_ = const_cast<volScalarField*>(&mesh_.lookupObject<volScalarField>(nameE_));
 
     // For every boundary patch of the interface
     for (uint j = 0; j < patchIDs_.size(); j++)
@@ -59,6 +58,10 @@ void preciceAdapter::FF::Epsilon::write(double * buffer)
 void preciceAdapter::FF::Epsilon::read(double * buffer)
 {
     int bufferIndex = 0;
+    
+    // Get a pointer to the epsilon field if it didn't exist
+    if (epsilon_ == NULL)
+      epsilon_ = const_cast<volScalarField*>(&mesh_.lookupObject<volScalarField>(nameE_));
 
     // For every boundary patch of the interface
     for (uint j = 0; j < patchIDs_.size(); j++)

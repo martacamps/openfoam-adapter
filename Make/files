@@ -20,6 +20,7 @@ FSI/DisplacementDelta.C
 FF/FF.C
 FF/Velocity.C
 FF/ReDiag.C
+FF/ReUpperDiag.C
 FF/VelocityGradient.C
 FF/Pressure.C
 FF/Epsilon.C

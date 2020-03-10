@@ -1,9 +1,9 @@
-#include "ReDiag.H"
+#include "ReUpperDiag.H"
 #include "cellSet.H"
 
 using namespace Foam;
 
-preciceAdapter::FF::ReDiag::ReDiag
+preciceAdapter::FF::ReUpperDiag::ReUpperDiag
 (
     const Foam::fvMesh& mesh,
     const std::string nameR
@@ -14,7 +14,7 @@ nameR_(nameR),mesh_(mesh),ReStress_(NULL)
     dataType_ = vector;
 }
 
-void preciceAdapter::FF::ReDiag::write(double * buffer)
+void preciceAdapter::FF::ReUpperDiag::write(double * buffer)
 {
     int bufferIndex = 0;
     
@@ -39,17 +39,17 @@ void preciceAdapter::FF::ReDiag::write(double * buffer)
             // x-dimension
             buffer[bufferIndex++]
             =
-            ReStress_->boundaryFieldRef()[patchID][i].xx();
+            ReStress_->boundaryFieldRef()[patchID][i].xy();
 
             // y-dimension
             buffer[bufferIndex++]
             =
-            ReStress_->boundaryFieldRef()[patchID][i].yy();
+            ReStress_->boundaryFieldRef()[patchID][i].xz();
 
             // z-dimension
             buffer[bufferIndex++]
             =
-            ReStress_->boundaryFieldRef()[patchID][i].zz();
+            ReStress_->boundaryFieldRef()[patchID][i].yz();
         }
     }
     
@@ -70,7 +70,7 @@ void preciceAdapter::FF::ReDiag::write(double * buffer)
     }
 }
 
-void preciceAdapter::FF::ReDiag::read(double * buffer)
+void preciceAdapter::FF::ReUpperDiag::read(double * buffer)
 {
     int bufferIndex = 0;
     

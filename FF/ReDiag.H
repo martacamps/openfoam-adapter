@@ -25,12 +25,6 @@ private:
     //- Name of the Re stress field
     const std::string nameR_;
 
-    //- Inlet volumetric flow rate (needed for mass correction)
-    //double vDot_;
-    
-    //- Calculate mass correction for the values a the interface.
-    //double massCorrection(double * buffer, int patchID);
-
 public:
 
     //- Constructor

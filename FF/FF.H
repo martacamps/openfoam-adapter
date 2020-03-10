@@ -5,6 +5,7 @@
 
 #include "FF/Velocity.H"
 #include "FF/ReDiag.H"
+#include "FF/ReUpperDiag.H"
 #include "FF/Pressure.H"
 #include "FF/Epsilon.H"
 #include "FF/PressureGradient.H"
@@ -40,7 +41,7 @@ protected:
     std::string nameP_ = "p";
     
     //- Name of the turbulent dissipation field
-    std::string nameE_ = "epsilon";
+    std::string nameE_ = "turbulenceProperties:epsilon";
     
     //- Name of the Reynolds stress field (the simulations needs to use the turbulenceFields function object)
     std::string nameR_ = "turbulenceProperties:R";
