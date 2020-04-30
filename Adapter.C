@@ -44,16 +44,19 @@ bool preciceAdapter::Adapter::configFileRead()
     // NOTE: lookupType<T>("name") is deprecated in openfoam.com since v1812,
     // which recommends get<T>("name") instead. However, get<T>("name")
     // is not implemented in openfoam.org at the moment.
-    preciceConfigFilename_ = preciceDict.lookupType<fileName>("preciceConfig");
+    //preciceConfigFilename_ = preciceDict.lookupType<fileName>("preciceConfig");
+    preciceConfigFilename_ = static_cast<word>(preciceDict.lookup("preciceConfig"));
     DEBUG(adapterInfo("  precice-config-file : " + preciceConfigFilename_));
 
     // Read and display the participant name
-    participantName_ = preciceDict.lookupType<word>("participant");
+    //participantName_ = preciceDict.lookupType<word>("participant");
+    participantName_ = static_cast<word>(preciceDict.lookup("participant"));
     DEBUG(adapterInfo("  participant name    : " + participantName_));
 
     // Read and display the list of modules
     DEBUG(adapterInfo("  modules requested   : "));
-    wordList modules_ = preciceDict.lookupType<wordList>("modules");
+    //wordList modules_ = preciceDict.lookupType<wordList>("modules");
+    wordList modules_ = static_cast<wordList>(preciceDict.lookup("modules"));
     for (auto module : modules_)
     {
         DEBUG(adapterInfo("  - " + module + "\n"));
@@ -87,7 +90,8 @@ bool preciceAdapter::Adapter::configFileRead()
                 struct InterfaceConfig interfaceConfig;
 
 
-                interfaceConfig.meshName = interfaceDict.lookupType<word>("mesh");
+                //interfaceConfig.meshName = interfaceDict.lookupType<word>("mesh");
+                interfaceConfig.meshName = static_cast<word>(interfaceDict.lookup("mesh"));
                 DEBUG(adapterInfo("  - mesh         : " + interfaceConfig.meshName));
 
                 // By default, assume "faceCenters" as locationsType
@@ -107,7 +111,8 @@ bool preciceAdapter::Adapter::configFileRead()
                 DEBUG(adapterInfo("    connectivity : " + std::to_string(interfaceConfig.meshConnectivity)));
               
                 DEBUG(adapterInfo("    patches      : "));
-                wordList patches = interfaceDict.lookupType<wordList>("patches");
+                //wordList patches = interfaceDict.lookupType<wordList>("patches");
+                wordList patches = static_cast<wordList>(interfaceDict.lookup("patches"));
                 for (auto patch : patches)
                 {
                     interfaceConfig.patchNames.push_back(patch);
@@ -115,15 +120,17 @@ bool preciceAdapter::Adapter::configFileRead()
                 }
                 
                 DEBUG(adapterInfo("    cellSets      : "));
-                wordList cellSets = interfaceDict.lookupType<wordList>("cellSets");
+                //wordList cellSets = interfaceDict.lookupType<wordList>("cellSets");
+                wordList cellSets = static_cast<wordList>(interfaceDict.lookup("cellSets"));
                 for (auto cellSet : cellSets)
                 {
-                    interfaceConfig.cellSetNames.push_back(patch);
+                    interfaceConfig.cellSetNames.push_back(cellSet);
                     DEBUG(adapterInfo("      - " + cellSet));
                 }
               
                 DEBUG(adapterInfo("    writeData    : "));
-                wordList writeData = interfaceDict.lookupType<wordList>("writeData");
+                //wordList writeData = interfaceDict.lookupType<wordList>("writeData");
+                wordList writeData = static_cast<wordList>(interfaceDict.lookup("writeData"));
                 for (auto writeDatum : writeData)
                 {
                     interfaceConfig.writeData.push_back(writeDatum);
@@ -131,7 +138,8 @@ bool preciceAdapter::Adapter::configFileRead()
                 }
 
                 DEBUG(adapterInfo("    readData     : "));
-                wordList readData = interfaceDict.lookupType<wordList>("readData");
+                //wordList readData = interfaceDict.lookupType<wordList>("readData");
+                wordList readData = static_cast<wordList>(interfaceDict.lookup("readData"));
                 for (auto readDatum : readData)
                 {
                     interfaceConfig.readData.push_back(readDatum);
@@ -229,29 +237,18 @@ void preciceAdapter::Adapter::configure()
             DEBUG(adapterInfo("  Timestep type: fixed."));
         }
 
-<<<<<<< HEAD
-    // Create interfaces
-    DEBUG(adapterInfo("Creating interfaces..."));
-    for (uint i = 0; i < interfacesConfig_.size(); i++)
-    {
-        Interface * interface = new Interface(*precice_, mesh_, interfacesConfig_.at(i).meshName, interfacesConfig_.at(i).locationsType, interfacesConfig_.at(i).patchNames, interfacesConfig_.at(i).cellSetNames);
-
-        interfaces_.push_back(interface);
-        DEBUG(adapterInfo("Interface created on mesh " + interfacesConfig_.at(i).meshName));
-=======
         // Initialize preCICE
         DEBUG(adapterInfo("Creating the preCICE solver interface..."));
         DEBUG(adapterInfo("  Number of processes: " + std::to_string(Pstream::nProcs())));
         DEBUG(adapterInfo("  MPI rank: " + std::to_string(Pstream::myProcNo())));
         precice_ = new precice::SolverInterface(participantName_, preciceConfigFilename_, Pstream::myProcNo(), Pstream::nProcs());
         DEBUG(adapterInfo("  preCICE solver interface was created."));
->>>>>>> 78fc865658486a6f8356ca1e7d1d15e2f80aac46
 
         // Create interfaces
         DEBUG(adapterInfo("Creating interfaces..."));
         for (uint i = 0; i < interfacesConfig_.size(); i++)
         {
-            Interface * interface = new Interface(*precice_, mesh_, interfacesConfig_.at(i).meshName, interfacesConfig_.at(i).locationsType, interfacesConfig_.at(i).patchNames, interfacesConfig_.at(i).meshConnectivity);
+            Interface * interface = new Interface(*precice_, mesh_, interfacesConfig_.at(i).meshName, interfacesConfig_.at(i).locationsType, interfacesConfig_.at(i).patchNames, interfacesConfig_.at(i).cellSetNames, interfacesConfig_.at(i).meshConnectivity);
             interfaces_.push_back(interface);
             DEBUG(adapterInfo("Interface created on mesh " + interfacesConfig_.at(i).meshName));
 
