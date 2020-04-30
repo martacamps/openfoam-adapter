@@ -62,12 +62,9 @@ bool preciceAdapter::FF::FluidFluid::readConfig(const IOdictionary& adapterConfi
     DEBUG(adapterInfo("    pressure field name : " + nameP_));
     
     // Read the volumetric flow rate across the inlet (the correction will be deactivated if this value is not present)
-	  if (adapterConfig["InletVdot"])
-	  {
-		  vDot_ = adapterConfig["InletVdot"].as<double>();
-	  }
-	  DEBUG(adapterInfo("    inlet volumetric flow rate : " + std::to_string(vDot_)));
-
+    vDot_ = FFdict.lookupOrDefault<double>("InletVdot","vDot");
+    DEBUG(adapterInfo("    inlet volumetric flow rate : " + vDot_));
+  
     return true;
 }
 
