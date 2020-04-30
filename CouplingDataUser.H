@@ -50,10 +50,10 @@ public:
     void setCellSetNames(std::vector<std::string> cellSetNames);
 
     //- Write the coupling data to the buffer
-    virtual void write(double * dataBuffer) = 0;
+    virtual void write(double * dataBuffer, bool meshConnectivity, const unsigned int dim) = 0;
 
     //- Read the coupling data from the buffer
-    virtual void read(double * dataBuffer) = 0;
+    virtual void read(double * dataBuffer, const unsigned int dim) = 0;
 
     //- Destructor
     virtual ~CouplingDataUser() {}
