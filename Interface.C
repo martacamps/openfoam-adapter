@@ -12,7 +12,7 @@ preciceAdapter::Interface::Interface
     std::string meshName,
     std::string locationsType,
     std::vector<std::string> patchNames,
-    std::vector<std::string> cellSetNames
+    std::vector<std::string> cellSetNames,
     bool meshConnectivity
 )
 :
@@ -20,7 +20,7 @@ precice_(precice),
 meshName_(meshName),
 locationsType_(locationsType),
 patchNames_(patchNames),
-cellSetNames_(cellSetNames)
+cellSetNames_(cellSetNames),
 meshConnectivity_(meshConnectivity)
 {
     // Get the meshID from preCICE
