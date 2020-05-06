@@ -79,6 +79,7 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         
         // Count the data location for all the cellSets
         // For every cellSet that participates in the coupling
+        double numFaceCentres = numDataLocations_;
 	      for (uint j = 0; j < cellSetNames_.size(); j++)
 	      {
 		        // Create a cell set
@@ -98,7 +99,7 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         		overlapCells.push_back(overlapRegion.toc());
         		numDataLocations_ += overlapCells[j].size();
            
-        }DEBUG(adapterInfo("Number of sellSet cell centres: " + std::to_string(numDataLocations_)));
+        }DEBUG(adapterInfo("Number of cellSet cell centres: " + std::to_string(numDataLocations_ - numFaceCentres)));
 
         // Array of the mesh vertices.
         // One mesh is used for all the patches and each vertex has 3D coordinates.
@@ -163,6 +164,7 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         
         // Count the data location for all the cellSets
         // For every cellSet that participates in the coupling
+        double numFaceNodes = numDataLocations_;
 	      for (uint j = 0; j < cellSetNames_.size(); j++)
 	      {
 
@@ -183,7 +185,7 @@ void preciceAdapter::Interface::configureMesh(const fvMesh& mesh)
         		overlapCells.push_back(overlapRegion.toc());
         		numDataLocations_ += overlapCells[j].size();
            
-        }DEBUG(adapterInfo("Number of sellSet cell centres: " + std::to_string(numDataLocations_)));
+        }DEBUG(adapterInfo("Number of cellSet cell centres: " + std::to_string(numDataLocations_ - numFaceNodes)));
 
         // Array of the mesh vertices.
         // One mesh is used for all the patches and each vertex has 3D coordinates.
